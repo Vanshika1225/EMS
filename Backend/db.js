@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Set the strictQuery option to false to address the deprecation warning
 mongoose.set('strictQuery', false);
 
-mongoose.connect('mongodb://localhost:27017/EMS', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/EMS');
 
 const db = mongoose.connection;
 

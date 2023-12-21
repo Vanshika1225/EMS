@@ -13,10 +13,10 @@ const secretKey = process.env.JWT_SECRET_KEY || 'default_secret_key';
 console.log(secretKey)
 // Middleware to check if the user is an admin
 const isAdmin = (req, res, next) => {
-  if (req.body.role === "admin") {
+  if (req.user && req.user.role === 'admin') {
     next(); // Allow admin to proceed to the next middleware
   } else {
-    res.status(403).send({ error: "Permission denied. Admins only." });
+    res.status(403).send({ error: 'Permission denied. Admins only.' });
   }
 };
 
@@ -112,13 +112,11 @@ router.post("/", async (req, res) => {
 // GET route for users
 router.get("/", async (req, res) => {
   try {
-    // If the user is an admin, return all employees
-    if (req.body.role === "admin") {
+    if (req.user && req.user.role === 'admin') {
       const employees = await Employee.find();
       res.send(employees);
     } else {
-      // If the user is not an admin, return only their own data
-      const employee = await Employee.findOne({ _id: req.body._id });
+      const employee = await Employee.findOne({ _id: req.user._id });
       res.send(employee);
     }
   } catch (error) {
@@ -127,16 +125,21 @@ router.get("/", async (req, res) => {
 });
 
 // DELETE route for admins
-router.delete("/:employeeId", isAdmin, async (req, res) => {
+router.delete("/:employeeId", async (req, res) => {
   try {
+    // console.log("Request object:", req);  // Log the entire request object
+    
     const { employeeId } = req.params;
-    if (req.user.role !== "admin") {
-      return res.status(403).send({ error: "Permission denied, Admins only." });
+
+    if (req.user.role === "admin" || req.user._id === employeeId) {
+      await Employee.deleteOne({ _id: employeeId });
+      return res.status(204).send();
+    } else {
+      return res.status(403).send({ error: "Permission denied. Admins only." });
     }
-    await Employee.deleteOne({ _id: employeeId });
-    res.status(204).send();
   } catch (error) {
-    res.status(500).send(error);
+    console.error("Delete Error:", error);
+    res.status(500).send({ error: "Internal server error" });
   }
 });
 
@@ -148,13 +151,18 @@ router.put("/:employeeId", async (req, res) => {
     if (req.user) {
       if (
         req.user.role === "admin" ||
-        req.user._id.toString() === employee.createdBy.toString()
+        req.user._id === employee.createdBy
       ) {
         const updateEmployee = await Employee.findByIdAndUpdate(
           employeeId,
           req.body,
           { new: true }
         );
+        
+        if (!updateEmployee) {
+          return res.status(404).json({ error: 'Employee not found' });
+        }
+        
         res.status(200).send(updateEmployee);
       } else {
         res.status(403).send({
