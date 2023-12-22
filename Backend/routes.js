@@ -7,12 +7,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./user.js"); // Make sure to use the correct file path
 const Performance = require('./performance');
-
+const Leave=require('./leave')
 router.use(bodyParser.json());
 const secretKey = process.env.JWT_SECRET_KEY || 'default_secret_key';
 console.log(secretKey)
 // Middleware to check if the user is an admin
 const isAdmin = (req, res, next) => {
+  console.log('User Role:', req.user.role); 
   if (req.user && req.user.role === 'admin') {
     next(); // Allow admin to proceed to the next middleware
   } else {
@@ -35,7 +36,6 @@ router.post("/signup", async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
 
@@ -75,7 +75,7 @@ router.post("/login", async (req, res) => {
 
     try {
       // Create a new JWT token
-      const token = jwt.sign({ username: foundUser.username }, secretKey);
+      const token = jwt.sign({ username: foundUser.username, role: foundUser.role }, secretKey);
 
       // Send the token in the response
       console.log("Login successful");
@@ -90,6 +90,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Create Employee
 router.post("/", async (req, res) => {
   try {
     const createdBy = req.user ? req.user._id : null;
@@ -143,6 +144,7 @@ router.delete("/:employeeId", async (req, res) => {
   }
 });
 
+// update employee
 router.put("/:employeeId", async (req, res) => {
   try {
     const { employeeId } = req.params;
@@ -178,8 +180,10 @@ router.put("/:employeeId", async (req, res) => {
   }
 });
 ''
+
 // Create performance and ratings for an employee (admin only)
 router.post('/:employeeId/performance', isAdmin, async (req, res) => {
+  console.log(req.user);
   try {
     const { employeeId } = req.params;
     const { performance, rating } = req.body;
@@ -190,6 +194,11 @@ router.post('/:employeeId/performance', isAdmin, async (req, res) => {
       performance,
       rating,
     });
+
+    // Ensure that only admins can create performance records
+    if (req.user && req.user.role !== 'admin') {
+      return res.status(403).send({ error: 'Permission denied. Admins only.' });
+    }
 
     await newPerformance.save();
 
@@ -212,10 +221,15 @@ router.get('/:employeeId/performance', async (req, res) => {
   try {
     const { employeeId } = req.params;
 
-    // Retrieve performance and ratings
-    const performance = await Performance.findOne({ employee: employeeId });
+    // Check if the user is an admin or the employee requesting their own performance
+    if (req.user.role === 'admin' || req.user._id === employeeId) {
+      // Retrieve performance and ratings
+      const performance = await Performance.findOne({ employee: employeeId });
 
-    res.status(200).send(performance);
+      res.status(200).send(performance);
+    } else {
+      res.status(403).send({ error: 'Permission denied. Admins or the employee only.' });
+    }
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send(error);
@@ -261,6 +275,28 @@ router.delete('/:employeeId/performance', isAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send(error);
+  }
+});
+
+// Create leave request
+router.post('/leaves',async(req,res)=>{
+  try {
+    const createdBy=req.user?req.user._id:null;
+    const newLeave=new Leave({
+      ...req.body,
+      createdBy,
+    });
+
+    await newLeave.validate();
+    await newLeave.save();
+    res.status(201).send(newLeave);
+  } catch (error) {
+    if(error.name==='ValidationError'){
+      res.status(400).send({error:error.message});
+    }
+    else{
+      res.status(500).send(error);
+    }
   }
 });
 

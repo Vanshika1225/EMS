@@ -12,7 +12,12 @@ app.use(express.json());
 // Middleware to decode JWT and attach user to request
 const authenticateJWT = (req, res, next) => {
   const token = req.header('Authorization');
-  
+  if (req.path === '/auth/signup') {
+    return next();
+  }
+  if (req.path === '/auth/login') {
+    return next();
+  }
   if (!token) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -23,6 +28,7 @@ const authenticateJWT = (req, res, next) => {
     console.log('JWT_SECRET_KEY:', secretKey);
 
     const decoded = jwt.verify(token, secretKey);
+    console.log(decoded)
     req.user = decoded;
     next();
   } catch (error) {
