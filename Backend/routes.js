@@ -6,18 +6,18 @@ const Employee = require("./employee");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./user.js"); // Make sure to use the correct file path
-const Performance = require('./performance');
-const Leave=require('./leave')
+const Performance = require("./performance");
+const Leave = require("./leave");
 router.use(bodyParser.json());
-const secretKey = process.env.JWT_SECRET_KEY || 'default_secret_key';
-console.log(secretKey)
+const secretKey = process.env.JWT_SECRET_KEY || "default_secret_key";
+console.log(secretKey);
 // Middleware to check if the user is an admin
 const isAdmin = (req, res, next) => {
-  console.log('User Role:', req.user.role); 
-  if (req.user && req.user.role === 'admin') {
+  console.log("User Role:", req.user.role);
+  if (req.user && req.user.role === "admin") {
     next(); // Allow admin to proceed to the next middleware
   } else {
-    res.status(403).send({ error: 'Permission denied. Admins only.' });
+    res.status(403).send({ error: "Permission denied. Admins only." });
   }
 };
 
@@ -75,7 +75,10 @@ router.post("/login", async (req, res) => {
 
     try {
       // Create a new JWT token
-      const token = jwt.sign({ username: foundUser.username, role: foundUser.role }, secretKey);
+      const token = jwt.sign(
+        { username: foundUser.username, role: foundUser.role },
+        secretKey
+      );
 
       // Send the token in the response
       console.log("Login successful");
@@ -113,7 +116,7 @@ router.post("/", async (req, res) => {
 // GET route for users
 router.get("/", async (req, res) => {
   try {
-    if (req.user && req.user.role === 'admin') {
+    if (req.user && req.user.role === "admin") {
       const employees = await Employee.find();
       res.send(employees);
     } else {
@@ -129,7 +132,7 @@ router.get("/", async (req, res) => {
 router.delete("/:employeeId", async (req, res) => {
   try {
     // console.log("Request object:", req);  // Log the entire request object
-    
+
     const { employeeId } = req.params;
 
     if (req.user.role === "admin" || req.user._id === employeeId) {
@@ -149,22 +152,19 @@ router.put("/:employeeId", async (req, res) => {
   try {
     const { employeeId } = req.params;
     const employee = await Employee.findById(employeeId);
-    
+
     if (req.user) {
-      if (
-        req.user.role === "admin" ||
-        req.user._id === employee.createdBy
-      ) {
+      if (req.user.role === "admin" || req.user._id === employee.createdBy) {
         const updateEmployee = await Employee.findByIdAndUpdate(
           employeeId,
           req.body,
           { new: true }
         );
-        
+
         if (!updateEmployee) {
-          return res.status(404).json({ error: 'Employee not found' });
+          return res.status(404).json({ error: "Employee not found" });
         }
-        
+
         res.status(200).send(updateEmployee);
       } else {
         res.status(403).send({
@@ -179,10 +179,10 @@ router.put("/:employeeId", async (req, res) => {
     res.status(500).send(error);
   }
 });
-''
+("");
 
 // Create performance and ratings for an employee (admin only)
-router.post('/:employeeId/performance', isAdmin, async (req, res) => {
+router.post("/:employeeId/performance", isAdmin, async (req, res) => {
   console.log(req.user);
   try {
     const { employeeId } = req.params;
@@ -196,8 +196,8 @@ router.post('/:employeeId/performance', isAdmin, async (req, res) => {
     });
 
     // Ensure that only admins can create performance records
-    if (req.user && req.user.role !== 'admin') {
-      return res.status(403).send({ error: 'Permission denied. Admins only.' });
+    if (req.user && req.user.role !== "admin") {
+      return res.status(403).send({ error: "Permission denied. Admins only." });
     }
 
     await newPerformance.save();
@@ -211,33 +211,35 @@ router.post('/:employeeId/performance', isAdmin, async (req, res) => {
 
     res.status(201).send(newPerformance);
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     res.status(500).send(error);
   }
 });
 
 // Get performance and ratings for an employee
-router.get('/:employeeId/performance', async (req, res) => {
+router.get("/:employeeId/performance", async (req, res) => {
   try {
     const { employeeId } = req.params;
 
     // Check if the user is an admin or the employee requesting their own performance
-    if (req.user.role === 'admin' || req.user._id === employeeId) {
+    if (req.user.role === "admin" || req.user._id === employeeId) {
       // Retrieve performance and ratings
       const performance = await Performance.findOne({ employee: employeeId });
 
       res.status(200).send(performance);
     } else {
-      res.status(403).send({ error: 'Permission denied. Admins or the employee only.' });
+      res
+        .status(403)
+        .send({ error: "Permission denied. Admins or the employee only." });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     res.status(500).send(error);
   }
 });
 
 // Update performance and ratings for an employee (admin only)
-router.put('/:employeeId/performance', isAdmin, async (req, res) => {
+router.put("/:employeeId/performance", isAdmin, async (req, res) => {
   try {
     const { employeeId } = req.params;
     const { performance, rating } = req.body;
@@ -251,13 +253,13 @@ router.put('/:employeeId/performance', isAdmin, async (req, res) => {
 
     res.status(200).send(updatedPerformance);
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     res.status(500).send(error);
   }
 });
 
 // Delete performance and ratings for an employee (admin only)
-router.delete('/:employeeId/performance', isAdmin, async (req, res) => {
+router.delete("/:employeeId/performance", isAdmin, async (req, res) => {
   try {
     const { employeeId } = req.params;
 
@@ -273,16 +275,16 @@ router.delete('/:employeeId/performance', isAdmin, async (req, res) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     res.status(500).send(error);
   }
 });
 
 // Create leave request
-router.post('/leaves',async(req,res)=>{
+router.post("/leaves", async (req, res) => {
   try {
-    const createdBy=req.user?req.user._id:null;
-    const newLeave=new Leave({
+    const createdBy = req.user ? req.user._id : null;
+    const newLeave = new Leave({
       ...req.body,
       createdBy,
     });
@@ -291,12 +293,56 @@ router.post('/leaves',async(req,res)=>{
     await newLeave.save();
     res.status(201).send(newLeave);
   } catch (error) {
-    if(error.name==='ValidationError'){
-      res.status(400).send({error:error.message});
-    }
-    else{
+    if (error.name === "ValidationError") {
+      res.status(400).send({ error: error.message });
+    } else {
       res.status(500).send(error);
     }
+  }
+});
+
+// get leave request
+router.get("/leaves", async (req, res) => {
+  try {
+    const createdBy = req.user ? req.user._id : null;
+    const leaves = await Leave.find({ createdBy });
+    res.send(leaves);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// approave or reject leave request (admin only)
+router.put("/leaves/:leaveId", async (req, res) => {
+  console.log('Update leave route reached');
+  try {
+    const { leaveId } = req.params;
+    const { status, approvedBy } = req.body;
+    console.log('leaveId:', leaveId);
+    console.log('status:', status);
+    console.log('approvedBy:', approvedBy);
+    const updatedLeave = await Leave.findByIdAndUpdate(
+      leaveId,
+      { $set: { status, approvedBy } },
+      { new: true }
+    );
+
+    res.status(200).send(updatedLeave);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send(error);
+  }
+});
+
+// Delete leave request (admin only)
+router.delete("/leaves/:leaveId", async (req, res) => {
+  try {
+    const { leaveId } = req.params;
+    await Leave.findByIdAndDelete(leaveId);
+    res.status(204).send();
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
   }
 });
 
