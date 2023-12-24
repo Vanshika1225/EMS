@@ -5,9 +5,11 @@ const bodyParser = require("body-parser");
 const Employee = require("./employee");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const mongoose = require('mongoose');
 const User = require("./user.js"); // Make sure to use the correct file path
 const Performance = require("./performance");
-const Leave = require("./leave");
+// const Leave = require("./leave");
+// const CombinedModel=require('combined');
 router.use(bodyParser.json());
 const secretKey = process.env.JWT_SECRET_KEY || "default_secret_key";
 console.log(secretKey);
@@ -93,13 +95,13 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
 // Create Employee
 router.post("/", async (req, res) => {
   try {
     const createdBy = req.user ? req.user._id : null;
     const newEmployee = new Employee({
       ...req.body,
-      createdBy,
     });
     await newEmployee.validate();
     await newEmployee.save();
@@ -116,7 +118,7 @@ router.post("/", async (req, res) => {
 // GET route for users
 router.get("/", async (req, res) => {
   try {
-    if (req.user && req.user.role === "admin") {
+    if (req.user && req.user.position === "admin") {
       const employees = await Employee.find();
       res.send(employees);
     } else {
@@ -128,15 +130,24 @@ router.get("/", async (req, res) => {
   }
 });
 
+// const mongoose = require('mongoose');
+
+// DELETE route for admins
 // DELETE route for admins
 router.delete("/:employeeId", async (req, res) => {
   try {
-    // console.log("Request object:", req);  // Log the entire request object
-
     const { employeeId } = req.params;
 
-    if (req.user.role === "admin" || req.user._id === employeeId) {
-      await Employee.deleteOne({ _id: employeeId });
+    console.log("User details:", req.user);
+
+    // Check if the user is an admin or the owner of the employee record
+    if (req.user.role === "admin" || req.user._id.equals(employeeId)) {
+      const result = await Employee.deleteOne({ _id: employeeId });
+
+      if (result.deletedCount === 0) {
+        return res.status(404).send({ error: "Employee not found" });
+      }
+
       return res.status(204).send();
     } else {
       return res.status(403).send({ error: "Permission denied. Admins only." });
@@ -147,14 +158,17 @@ router.delete("/:employeeId", async (req, res) => {
   }
 });
 
-// update employee
+
+
+
+// Update employee
 router.put("/:employeeId", async (req, res) => {
   try {
     const { employeeId } = req.params;
     const employee = await Employee.findById(employeeId);
 
     if (req.user) {
-      if (req.user.role === "admin" || req.user._id === employee.createdBy) {
+      if (req.user.position === "admin" || req.user._id === employee.createdBy) {
         const updateEmployee = await Employee.findByIdAndUpdate(
           employeeId,
           req.body,
@@ -168,18 +182,17 @@ router.put("/:employeeId", async (req, res) => {
         res.status(200).send(updateEmployee);
       } else {
         res.status(403).send({
-          error: "Permission denied, You can update only your own entry",
+          error: "Permission denied. You can update only your own entry.",
         });
       }
     } else {
-      res.status(401).send({ error: "Unauthorized, Please login first" });
+      res.status(401).send({ error: "Unauthorized. Please login first." });
     }
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send(error);
   }
 });
-("");
 
 // Create performance and ratings for an employee (admin only)
 router.post("/:employeeId/performance", isAdmin, async (req, res) => {
@@ -281,69 +294,71 @@ router.delete("/:employeeId/performance", isAdmin, async (req, res) => {
 });
 
 // Create leave request
-router.post("/leaves", async (req, res) => {
-  try {
-    const createdBy = req.user ? req.user._id : null;
-    const newLeave = new Leave({
-      ...req.body,
-      createdBy,
-    });
+// router.post("/leaves", async (req, res) => {
+//   try {
+//     const createdBy = req.user ? req.user._id : null;
+//     const newLeave = new Leave({
+//       ...req.body,
+//       createdBy,
+//     });
 
-    await newLeave.validate();
-    await newLeave.save();
-    res.status(201).send(newLeave);
-  } catch (error) {
-    if (error.name === "ValidationError") {
-      res.status(400).send({ error: error.message });
-    } else {
-      res.status(500).send(error);
-    }
-  }
-});
+//     await newLeave.validate();
+//     await newLeave.save();
+//     res.status(201).send(newLeave);
+//   } catch (error) {
+//     if (error.name === "ValidationError") {
+//       res.status(400).send({ error: error.message });
+//     } else {
+//       res.status(500).send(error);
+//     }
+//   }
+// });
 
-// get leave request
-router.get("/leaves", async (req, res) => {
-  try {
-    const createdBy = req.user ? req.user._id : null;
-    const leaves = await Leave.find({ createdBy });
-    res.send(leaves);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
+// // get leave request
+// router.get("/leaves", async (req, res) => {
+//   try {
+//     const createdBy = req.user ? req.user._id : null;
+//     const leaves = await Leave.find({ createdBy });
+//     res.send(leaves);
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// });
 
-// approave or reject leave request (admin only)
-router.put("/leaves/:leaveId", async (req, res) => {
-  console.log('Update leave route reached');
-  try {
-    const { leaveId } = req.params;
-    const { status, approvedBy } = req.body;
-    console.log('leaveId:', leaveId);
-    console.log('status:', status);
-    console.log('approvedBy:', approvedBy);
-    const updatedLeave = await Leave.findByIdAndUpdate(
-      leaveId,
-      { $set: { status, approvedBy } },
-      { new: true }
-    );
+// // approave or reject leave request (admin only)
+// router.put("/leaves/:leaveId", async (req, res) => {
+//   console.log('Update leave route reached');
+//   try {
+//     const { leaveId } = req.params;
+//     const { status, approvedBy } = req.body;
+//     console.log('leaveId:', leaveId);
+//     console.log('status:', status);
+//     console.log('approvedBy:', approvedBy);
+//     const updatedLeave = await Leave.findByIdAndUpdate(
+//       leaveId,
+//       { $set: { status, approvedBy } },
+//       { new: true }
+//     );
 
-    res.status(200).send(updatedLeave);
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send(error);
-  }
-});
+//     res.status(200).send(updatedLeave);
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).send(error);
+//   }
+// });
 
-// Delete leave request (admin only)
-router.delete("/leaves/:leaveId", async (req, res) => {
-  try {
-    const { leaveId } = req.params;
-    await Leave.findByIdAndDelete(leaveId);
-    res.status(204).send();
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(error);
-  }
-});
+// // Delete leave request (admin only)
+// router.delete("/leaves/:leaveId", async (req, res) => {
+//   try {
+//     const { leaveId } = req.params;
+//     await Leave.findByIdAndDelete(leaveId);
+//     res.status(204).send();
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send(error);
+//   }
+// });
+
+// router.post()
 
 module.exports = router;
