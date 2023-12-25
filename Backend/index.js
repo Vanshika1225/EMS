@@ -42,7 +42,7 @@ app.use(authenticateJWT);
 // Use your routes
 app.use('/employees', routes);
 app.use('/auth', routes);
-
+// app.use('/', routes);
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });

@@ -30,6 +30,24 @@ router.post("/signup", async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    // Validation for username
+    if (!/^[a-zA-Z]/.test(username)) {
+      return res.status(400).json({ error: "Username must start with a character" });
+    }
+
+    if (/[^a-zA-Z0-9]/.test(username)) {
+      return res.status(400).json({ error: "Username must not contain special characters or digits" });
+    }
+
+    // Validation for password
+    if (password.length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters long" });
+    }
+
+    if (!/[a-zA-Z]/.test(password) || !/\d/.test(password) || !/[^a-zA-Z0-9]/.test(password)) {
+      return res.status(400).json({ error: "Password must contain at least one letter, one digit, and one special character" });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ username });
 
@@ -271,7 +289,7 @@ router.delete("/:employeeId/performance", isAdmin, async (req, res) => {
     const { employeeId } = req.params;
 
     // Delete performance and ratings
-    await Performance.findOneAndRemove({ employee: employeeId });
+    await Performance.findOneAndDelete({ employee: employeeId });
 
     // Remove the reference from the employee
     await Employee.findByIdAndUpdate(
@@ -291,8 +309,17 @@ router.delete("/:employeeId/performance", isAdmin, async (req, res) => {
 router.post("/leaves", async (req, res) => {
   try {
     const createdBy = req.user ? req.user._id : null;
+    const { startDate, endDate, ...otherLeaveData } = req.body;
+
+    // Check if the end date is after the start date
+    if (new Date(endDate) <= new Date(startDate)) {
+      return res.status(400).json({ error: "End date must be after the start date" });
+    }
+
     const newLeave = new Leave({
-      ...req.body,
+      ...otherLeaveData,
+      startDate,
+      endDate,
       createdBy,
     });
 
@@ -307,6 +334,7 @@ router.post("/leaves", async (req, res) => {
     }
   }
 });
+
 
 // get leave request
 router.get("/leaves", async (req, res) => {
@@ -354,35 +382,45 @@ router.delete("/leaves/:leaveId", async (req, res) => {
 });
 
 // create attendance
-router.post('/attendance',async(req,res)=>{
-  try{
-    const {employeeid,date}=req.body;
-    // check if the employee exists
-    const employee=await Employee.findById(employeeId);
-    if(!employee){
-      res.status(400).json({error:'Employee doesnot exists'});
+router.post('/attendance', async (req, res) => {
+  try {
+    const { employeeId, date } = req.body;
+
+    // Check if the employee exists
+    const employee = await Employee.findById(employeeId);
+    console.log(employee)
+    if (!employee) {
+      return res.status(400).json({ error: 'Employee does not exist' });
     }
-    // check if the attendance already exists fnew Attendance ({or the given date
-    const existingAttendance=await Attendance.findOne({employee:employeeId,date});
-    if(existingAttendance){
-      return res.status(400).json({message:"This attendance already exist in record"})
+
+    // Check if the attendance already exists for the given date
+    const existingAttendance = await Attendance.findOne({ employee: employeeId, date });
+    if (existingAttendance) {
+      return res.status(400).json({ message: 'Attendance already recorded for this date' });
     }
-    const newAttendance= new Attendance({
-      employee:employeeId,
+
+    // Create and save new attendance record
+    const newAttendance = new Attendance({
+      employee: employeeId,
       date,
-    })
+    });
+
     await newAttendance.save();
-    res.status(201).json({message:'Attendance recorded successfully!'})
-  }catch(error){
-    console.log("Error: ",error);
-    res.status(500).json({error:'Internal Server Error'});
+
+    // Send success response
+    return res.status(201).json({ message: 'Attendance recorded successfully!' });
+  } catch (error) {
+    console.error('Error:', error);
+
+    // Handle other errors and send an appropriate response
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 // Get attendance records
 router.get('/attendance',async(req,res)=> {
   try{
-    const attendenceRecords=await Attendance.find().populate('employee');
+    const attendenceRecords=await Attendance.find().populate('employeeId');
     res.status(200).json(attendenceRecords);
   }catch(error){
     console.log("Error: ",error);
