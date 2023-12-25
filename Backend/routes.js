@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const User = require("./user.js"); // Make sure to use the correct file path
 const Performance = require("./performance");
 const Leave = require("./leave");
+const Attendance = require("./attendence.js");
 
 router.use(bodyParser.json());
 const secretKey = process.env.JWT_SECRET_KEY || "default_secret_key";
@@ -352,5 +353,77 @@ router.delete("/leaves/:leaveId", async (req, res) => {
   }
 });
 
+// create attendance
+router.post('/attendance',async(req,res)=>{
+  try{
+    const {employeeid,date}=req.body;
+    // check if the employee exists
+    const employee=await Employee.findById(employeeId);
+    if(!employee){
+      res.status(400).json({error:'Employee doesnot exists'});
+    }
+    // check if the attendance already exists fnew Attendance ({or the given date
+    const existingAttendance=await Attendance.findOne({employee:employeeId,date});
+    if(existingAttendance){
+      return res.status(400).json({message:"This attendance already exist in record"})
+    }
+    const newAttendance= new Attendance({
+      employee:employeeId,
+      date,
+    })
+    await newAttendance.save();
+    res.status(201).json({message:'Attendance recorded successfully!'})
+  }catch(error){
+    console.log("Error: ",error);
+    res.status(500).json({error:'Internal Server Error'});
+  }
+});
+
+// Get attendance records
+router.get('/attendance',async(req,res)=> {
+  try{
+    const attendenceRecords=await Attendance.find().populate('employee');
+    res.status(200).json(attendenceRecords);
+  }catch(error){
+    console.log("Error: ",error);
+    res.status(500).json({error:'Internal Server Error'});
+  }
+});
+
+// update attendance record (admin only)
+router.put('/attendance/:attendanceId',isAdmin,async(req,res)=>{
+  try{
+    const {attendanceId}=req.params;
+    const {date}=req.body;
+    // Check if the attendance record exists
+    const attendance=await Attendance.findById(attendanceId);
+    if(!attendance){
+      return res.status(404).json({message:"Attendance not found"})
+    }
+    attendance.date=date;
+    await attendance.save();
+    res.status(200).json({message:'Attendance record updated successfully!'})
+  }catch(error){
+    console.log("Error: ",error);
+    res.status(500).json({error:'Internal Server Error'});
+  }
+})
+
+// Delete attendance record
+router.delete('/attendance/:attendanceId', isAdmin , async (req, res) =>{
+  try{
+    const {attendanceId}=req.params;
+    // Check if the attendance record exists
+    const attendance=await Attendance.findById(attendanceId);
+    if(!attendance){
+      return res.status(404).json({message:"Attendance not found"})
+    }
+    await Attendance.findByIdAndDelete(attendanceId);
+    res.status(204).json({message:`Deleted Attendance Record with id ${attendanceId}`})
+  }catch(error){
+    console.log("Error: ",error);
+    res.status(500).json({error:'Internal Server Error'});
+  }
+});
 
 module.exports = router;
