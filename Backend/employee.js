@@ -40,7 +40,7 @@ const employeeSchema = new mongoose.Schema({
     type:Date,
     required:true,
   },
-  position: {
+  role: {
     type: String,
     required: true,
     enum: ['user', 'admin'],
