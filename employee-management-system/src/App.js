@@ -1,22 +1,20 @@
-import { Router } from 'express';
+// import { Router } from 'express';
+import LoginForm from './components/LoginForm';
 import React from 'react'
-import {BrowserRouter as Router,Route,Switch} from 'react-router-dom'
-import Login from './Components/Login';
-import Signup from './Components/Signup';
-import Dashboard from './Components/Dashboard';
+import Dashboard from './components/Dashboard'
+import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import './App.css';
 
-function App() {
-  return (
-    <Router>
-      <Switch>
-        <Router path="/login" component={Login} />
-        <Router path="/signup" component={Signup} />
-        <Router path="/dashboard" component={Dashboard} />
-        <Router path="/" exact component={Login} />
-      </Switch>
-    </Router>
-  );
+function App(){
+  return(
+    <BrowserRouter>
+       <Routes>
+        <Route path='auth/login' element={<LoginForm />}></Route>
+        <Route path='dashboard' element={<Dashboard />}></Route>
+       </Routes>
+    </BrowserRouter>
+  )
 }
+
 
 export default App;
