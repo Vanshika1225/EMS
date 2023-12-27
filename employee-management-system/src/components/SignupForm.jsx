@@ -16,7 +16,7 @@ const SignupForm = () => {
 
     axios.post('http://localhost:3000/auth/signup', values)
       .then(result => {
-        navigate('/login'); // Redirect to login after successful signup
+        navigate('/auth/login'); // Redirect to login after successful signup
       })
       .catch(err => {
         setError('Error signing up. Please try again.'); // Set error message
@@ -25,12 +25,14 @@ const SignupForm = () => {
   };
 
   return (
-    <div>
+    <div className="signup-container">
+      <div className="background-container">
+      </div>
       <div>
         <div>{error && <div style={{ color: 'red' }}>{error}</div>}</div>
         <h2>Sign Up</h2>
         <form onSubmit={handleSubmit}>
-          <div>
+          <div className="form-group">
             <label htmlFor='username'>Username</label>
             <input
               type="text"
@@ -39,7 +41,7 @@ const SignupForm = () => {
               onChange={(e) => setValues({ ...values, username: e.target.value })}
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor='password'>Password</label>
             <input
               type="password"
@@ -49,8 +51,8 @@ const SignupForm = () => {
             />
           </div>
           <button type='submit'>Sign Up</button>
-          <div>
-            <p>Already have an account? <Link to="/login">Log in here</Link></p>
+          <div className="login-link">
+            <p>Already have an account? <Link to="/auth/login">Log in here</Link></p>
           </div>
         </form>
       </div>

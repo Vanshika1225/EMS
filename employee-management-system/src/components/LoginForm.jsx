@@ -25,12 +25,14 @@ const LoginForm = () => {
   };
 
   return (
-    <div>
+    <div className="login-container"> 
+      <div className="background-container">
+      </div>
       <div>
         <div>{error && <div style={{ color: 'red' }}>{error}</div>}</div>
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
-          <div>
+          <div className="form-group">
             <label htmlFor='username'>Username</label>
             <input
               type="text"
@@ -39,7 +41,7 @@ const LoginForm = () => {
               onChange={(e) => setValues({ ...values, username: e.target.value })}
             />
           </div>
-          <div>
+          <div className="form-group">
             <label htmlFor='password'>Password</label>
             <input
               type="password"
@@ -49,12 +51,13 @@ const LoginForm = () => {
             />
           </div>
           <button type='submit'>Submit</button>
-          <div>
-            <input type='checkbox' name='tick' id='tick' />
-            <label htmlFor="password">You agree with the terms & conditions</label>
-          </div>
-          <div>
-            <p>Don't have an account? <Link to="/SignupForm">Sign up here</Link></p>
+          <div className="signup-link dis">
+    <input type='checkbox' name='tick' id='tick' />
+    <label htmlFor="password" className="margin">You agree with the terms & conditions</label>
+</div>
+
+          <div className="signup-link">
+            <p>Don't have an account? <Link to="/auth/signup">Sign up here</Link></p>
           </div>
         </form>
       </div>
