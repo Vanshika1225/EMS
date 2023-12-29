@@ -1,5 +1,5 @@
 import React from 'react'
-import {Link} from 'react-router-dom';
+import {Link,Outlet} from 'react-router-dom';
 const Dashboard = () => {
   return (
     <div>
@@ -12,16 +12,16 @@ const Dashboard = () => {
                   <Link to="/dashboard">Dashboard</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard">Manage Employees</Link>
+                  <Link to="/dashboard/employee">Manage Employees</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard">Attendance</Link>
+                  <Link to="/dashboard/attendance">Attendance</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard">Leave</Link>
+                  <Link to="/dashboard/leave">Leave</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard">Performance</Link>
+                  <Link to="/dashboard/performance">Performance</Link>
                 </li>
                 <li>
                   <Link to="/dashboard">Logout</Link>
@@ -33,6 +33,7 @@ const Dashboard = () => {
           <div>
             <h4>Employee Management System</h4>
           </div>
+          <Outlet/>
         </div>
       </div>
     </div>

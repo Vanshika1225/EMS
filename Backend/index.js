@@ -3,12 +3,13 @@ const express = require('express');
 const mongoose = require('./db'); // Assuming you have a 'db.js' file for connecting to MongoDB
 const routes = require('./routes');
 const jwt = require('jsonwebtoken');
-
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON data
 app.use(express.json());
+app.use(cors())
 // Middleware to decode JWT and attach user to request
 const authenticateJWT = (req, res, next) => {
   const token = req.header('Authorization');
