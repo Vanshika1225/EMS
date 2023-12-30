@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import '../Signup.css';
 
 const SignupForm = () => {
   const [values, setValues] = useState({
@@ -10,6 +11,16 @@ const SignupForm = () => {
 
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Add a class to the body element when the component mounts
+    document.body.classList.add('signup-page');
+
+    // Remove the class when the component unmounts
+    return () => {
+      document.body.classList.remove('signup-page');
+    };
+  }, []);
 
   const handleInputChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -48,13 +59,17 @@ const SignupForm = () => {
   };
 
   return (
-    <div className="signup-container">
-    <div className="background-container"></div>
+    <>
     <div>
-      <div>{error && <div style={{ color: 'red' }}>{error}</div>}</div>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSignup}>
-      <div className="form-group">
+       <h1 className="employee-heading">Employee Management System</h1>
+    </div>
+    <div className="signup-container">
+      <div className="background-container"></div>
+      <div>
+        <div>{error && <div style={{ color: 'red' }}>{error}</div>}</div>
+        <h2>Sign Up</h2>
+        <form onSubmit={handleSignup}>
+          <div className="form-group">
             <label htmlFor="username">Username</label>
             <input
               type="text"
@@ -79,6 +94,7 @@ const SignupForm = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

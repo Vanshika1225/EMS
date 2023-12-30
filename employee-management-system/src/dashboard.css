@@ -1,0 +1,40 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.sidebar-container{
+    width:23%;
+    height:100%;
+    background-color:black;
+    color:white;
+    position: fixed;
+}
+.sidebar-container .navbar {
+    padding: 83px;
+    margin: 56px 0px;
+}
+.sidebar-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+.sidebar-container li {
+    padding: 10px;
+  }
+  
+  .sidebar-container a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .sidebar-container a:hover {
+     background-color: white;
+     width: 50px;
+  }
+  .sidebar-container a:{
+    margin-left: 77px;
+    margin-top: 79px;
+    font-size: 11vh;
+    display: inline-block;
+  }

@@ -1,12 +1,13 @@
 import React from 'react'
 import {Link,Outlet} from 'react-router-dom';
+import '../dashboard.css'
 const Dashboard = () => {
   return (
     <div>
       <div>
-        <div>
-          <div>
-              <Link to="/dashboard">CWC</Link>
+        <div className="sidebar-container">
+              <Link to="/dashboard" className="a">CWC</Link>
+          <div className="navbar">
               <ul>
                 <li>
                   <Link to="/dashboard">Dashboard</Link>
@@ -29,7 +30,7 @@ const Dashboard = () => {
               </ul>
           </div>
         </div>
-        <div>
+        <div className="top-container">
           <div>
             <h4>Employee Management System</h4>
           </div>

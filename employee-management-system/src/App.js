@@ -8,27 +8,34 @@ import Employee from './components/Employee';
 import Attendance from './components/Attendance';
 import Performance from './components/Leave';
 import Leave from './components/Performance';
-
-import {BrowserRouter,Routes,Route} from 'react-router-dom'
+// import { useNavigate} from 'react-router-dom';
+// import {useEffect} from 'react'
+import {BrowserRouter,Routes,Route} from 'react-router-dom';
 import './App.css';
 
-function App(){
-  return(
+function App() {
+  // const navigate = useNavigate();
+
+  // // Redirect to login page when the app starts
+  // useEffect(() => {
+  //   navigate('/auth/login');
+  // }, [navigate]);
+
+  return (
     <BrowserRouter>
-       <Routes>
-        <Route path='/auth/login' element={<LoginForm />}></Route>
+      <Routes>
+        <Route path='/auth/login' element={<LoginForm />} />
         <Route path='/auth/signup' element={<SignupForm />} />
         <Route path='dashboard' element={<Dashboard />}>
-          <Route path='' element={<Home />}></Route>
-          <Route path='/dashboard/employee' element={<Employee />}></Route>
-          <Route path='/dashboard/attendance' element={<Attendance />}></Route>
-          <Route path='/dashboard/leave' element={<Leave />}></Route>
-          <Route path='/dashboard/performance' element={<Performance />}></Route>
+          <Route path='' element={<Home />} /> {/* Corrected path */}
+          <Route path='/dashboard/employee' element={<Employee />} />
+          <Route path='/dashboard/attendance' element={<Attendance />} />
+          <Route path='/dashboard/leave' element={<Leave />} />
+          <Route path='/dashboard/performance' element={<Performance />} />
         </Route>
-       </Routes>
+      </Routes>
     </BrowserRouter>
-  )
+  );
 }
-
 
 export default App;

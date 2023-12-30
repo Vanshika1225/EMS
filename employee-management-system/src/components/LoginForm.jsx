@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import '../Login.css';
 
 const LoginForm = () => {
   const [values, setValues] = useState({
@@ -10,6 +11,16 @@ const LoginForm = () => {
 
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Add a class to the body element when the component mounts
+    document.body.classList.add('login-page');
+
+    // Remove the class when the component unmounts
+    return () => {
+      document.body.classList.remove('login-page');
+    };
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -25,9 +36,14 @@ const LoginForm = () => {
   };
 
   return (
+    <>
+    <div>
+       <h1 className="employee-heading">Employee Management System</h1>
+    </div>
     <div className="login-container"> 
       <div className="background-container">
       </div>
+      
       <div>
         <div>{error && <div style={{ color: 'red' }}>{error}</div>}</div>
         <h2>Login</h2>
@@ -52,9 +68,9 @@ const LoginForm = () => {
           </div>
           <button type='submit'>Submit</button>
           <div className="signup-link dis">
-    <input type='checkbox' name='tick' id='tick' />
-    <label htmlFor="password" className="margin">You agree with the terms & conditions</label>
-</div>
+            <input type='checkbox' name='tick' id='tick' />
+            <label htmlFor="password" className="margin">You agree with the terms & conditions</label>
+          </div>
 
           <div className="signup-link">
             <p>Don't have an account? <Link to="/auth/signup">Sign up here</Link></p>
@@ -62,7 +78,7 @@ const LoginForm = () => {
         </form>
       </div>
     </div>
+</>
   );
 };
-
 export default LoginForm;
