@@ -25,18 +25,20 @@ const isAdmin = (req, res, next) => {
   }
 };
 
+const validateEmail = (email) => {
+  // Email validation regex (you can adjust it as needed)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 // Signup endpoint
 router.post("/signup", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    // Validation for username
-    if (!/^[a-zA-Z]/.test(username)) {
-      return res.status(400).json({ error: "Username must start with a character" });
-    }
-
-    if (/[^a-zA-Z0-9]/.test(username)) {
-      return res.status(400).json({ error: "Username must not contain special characters or digits" });
+    // Validation for email
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
     }
 
     // Validation for password
@@ -49,8 +51,8 @@ router.post("/signup", async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = await User.findOne({ username });
-
+    const existingUser = await User.findOne({ email });
+    
     if (existingUser) {
       return res.status(400).json({ error: "User already exists" });
     }
@@ -58,7 +60,7 @@ router.post("/signup", async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ username, password: hashedPassword });
+    const newUser = new User({ email, password: hashedPassword });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully!" });
@@ -69,13 +71,14 @@ router.post("/signup", async (req, res) => {
 });
 
 // Login endpoint
+// Login endpoint
 router.post("/login", async (req, res) => {
   try {
     console.log("Login request received");
-    const { username, password } = req.body;
+    const { usernameOrEmail, password } = req.body;
 
-    // Check if user already exists or not
-    const foundUser = await User.findOne({ username });
+    // Check if user exists by username or email
+    const foundUser = await User.findOne({ $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }] });
 
     if (!foundUser) {
       return res.status(401).json({ error: "Invalid credentials!" });
@@ -97,7 +100,7 @@ router.post("/login", async (req, res) => {
     try {
       // Create a new JWT token
       const token = jwt.sign(
-        { username: foundUser.username, role: foundUser.role },
+        { username: foundUser.username, email: foundUser.email, role: foundUser.role },
         secretKey
       );
 

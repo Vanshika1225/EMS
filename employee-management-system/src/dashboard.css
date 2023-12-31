@@ -1,40 +1,122 @@
-*{
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box; /* Include this to ensure padding and borders are included in the element's total width and height */
 }
-.sidebar-container{
-    width:23%;
-    height:100%;
-    background-color:black;
-    color:white;
-    position: fixed;
+
+body {
+  overflow-x: hidden; /* Hide the horizontal scrollbar */
 }
+
+.sidebar-container {
+  width: 23%;
+  height: 100%;
+  background-color: black;
+  color: white;
+  position: fixed;
+  overflow-y: auto; /* Add vertical scrollbar if needed */
+}
+
 .sidebar-container .navbar {
-    padding: 83px;
-    margin: 56px 0px;
+  font-size: larger;
+  padding: 80px;
+  margin: -46px 60px;
 }
+
 .sidebar-container ul {
-    list-style: none;
-    padding: 0;
-  }
-  
+  list-style: none;
+  padding: 0;
+}
+
 .sidebar-container li {
-    padding: 10px;
+  padding: 10px;
+}
+
+.sidebar-container a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.sidebar-container .a {
+  margin-top: 79px;
+  font-size: 6vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-container {
+  display: flex;
+  width: 100%;
+  height: 8vh;
+  overflow: hidden; /* Hide overflow content */
+  margin-left: 50vw;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+
+.top-container h4 {
+  font-size: 3vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+  margin-left: 15px;
+}
+  /* Add these styles to your CSS file, e.g., NavigationBar.css */
+.navbar1 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 15px;
+  margin: -3px 220px;
+}
+
+.navbar1 a {
+  margin-left: 7px;
+  text-decoration: none;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: black;
+  width: 5vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.navbar1 a:hover{
+  background-color: #4b4949;
+  color: rgb(242, 238, 238);
+}
+
+@media screen and (max-width:1024px) {
+  .navbar1{
+    margin: -3px 114px;
+    font-size: xx-small;
   }
-  
-  .sidebar-container a {
-    color: #fff;
-    text-decoration: none;
+}
+@media screen and (max-width:768px) {
+  .navbar1{
+    margin: -3px 64px;
+    font-size: xx-small;
   }
-  
-  .sidebar-container a:hover {
-     background-color: white;
-     width: 50px;
+  .sidebar-container{
+    width: 19%;
   }
-  .sidebar-container a:{
-    margin-left: 77px;
-    margin-top: 79px;
-    font-size: 11vh;
-    display: inline-block;
+  .sidebar-container .navbar{
+    padding: 60px;
+    margin: -46px 21px;
   }
+}
+
+@media screen and (max-width:425px) {
+  .sidebar-container .a{
+    font-size: 1em;
+  }
+  .sidebar-container .navbar{
+    font-size: small;
+    margin: -34px -34px;
+  }
+}

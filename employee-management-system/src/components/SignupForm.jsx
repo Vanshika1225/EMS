@@ -5,7 +5,7 @@ import '../Signup.css';
 
 const SignupForm = () => {
   const [values, setValues] = useState({
-    username: '',
+    email: '', // Change "username" to "email"
     password: '',
   });
 
@@ -70,11 +70,11 @@ const SignupForm = () => {
         <h2>Sign Up</h2>
         <form onSubmit={handleSignup}>
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label> {/* Change "username" to "email" */}
             <input
-              type="text"
-              name="username"
-              placeholder="Enter your username"
+              type="email"
+              name="email" // Change "username" to "email"
+              placeholder="Enter your email" // Change "username" to "email"
               onChange={handleInputChange}
             />
           </div>
