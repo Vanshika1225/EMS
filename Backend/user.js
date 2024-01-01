@@ -15,7 +15,7 @@ const userSchema=new Schema({
         role: {
         type: String,
         enum: ['user', 'admin'], // Specify possible roles
-        default: 'admin', // Set a default role if none is provided
+        default: 'user', // Set a default role if none is provided
     },
 });
 const User=mongoose.model('User',userSchema);

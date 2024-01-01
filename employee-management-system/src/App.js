@@ -1,3 +1,4 @@
+// App.js
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
@@ -17,7 +18,8 @@ function App() {
         <Route path='/' element={<Dashboard />}>
           <Route index element={<Home />} />
           <Route path='employee' element={<Employee />} />
-          <Route path='attendance' element={<Attendance />} />
+          {/* Update the route path for Attendance */}
+          <Route path='attendance/*' element={<Attendance />} />
           <Route path='leave' element={<Leave />} />
           <Route path='performance' element={<Performance />} />
         </Route>

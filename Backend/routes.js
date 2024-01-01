@@ -34,7 +34,7 @@ const validateEmail = (email) => {
 // Signup endpoint
 router.post("/signup", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     // Validation for email
     if (!email) {
@@ -60,7 +60,7 @@ router.post("/signup", async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ email, password: hashedPassword });
+    const newUser = new User({ email, password: hashedPassword, role:role||'user' });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully!" });
@@ -70,7 +70,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// Login endpoint
 // Login endpoint
 router.post("/login", async (req, res) => {
   try {

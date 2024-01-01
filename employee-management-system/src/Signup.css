@@ -1,20 +1,20 @@
 body.signup-page {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(#0dd4d4 45%, #ffffff 40%);
+    background: linear-gradient(black 45%, #ffffff 40%);
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .background-container {
-    background-color: #0dd4d4; /* Set your desired background color */
+    background-color: black; /* Set your desired background color */
     height: 45%;
   }
   .employee-heading {
     font-size: 24px;
     font-weight: 700px;
-    color: black;
+    color: white;
     text-align: center;
     /* margin-top: 10%; */
   }
@@ -50,6 +50,13 @@ body.signup-page {
     box-sizing: border-box;
   }
   
+  select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
   button {
     background-color: #007bff;
     color: #fff;
@@ -109,6 +116,7 @@ body.signup-page {
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
+    margin-top: 10px;
   }
   
   button:hover {
@@ -130,3 +138,44 @@ body.signup-page {
     text-decoration: underline;
   }
   
+  .eye-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2px;
+    height: 1vh;
+    margin: 4px 230px;
+    /* flex-direction: initial; */
+    /* color: transparent; */
+    background-color: transparent;
+    margin-top: -30px;
+  }
+  .form-group1{
+    margin-top: 30px;
+  }
+
+  @media screen and (max-width:425px) {
+    .btn{
+      margin-top:33px;
+    }
+    .eye-button{
+      margin: -26px 165px;
+    }
+  }
+  @media screen and (max-width:320px) {
+    .employee-heading{
+      font-size: 1em;
+      margin-top: 101px;
+    }
+      .login-container{
+        width: 247px;
+        margin-left: 34px;
+        margin-top: 40px;
+      }
+      .eye-button{
+        margin: -28px 167px;
+      }
+      .btn{
+        margin-top: 33px;
+      }
+  }

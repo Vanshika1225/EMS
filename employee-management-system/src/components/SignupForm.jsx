@@ -1,3 +1,5 @@
+// SignupForm.js
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -7,16 +9,15 @@ const SignupForm = () => {
   const [values, setValues] = useState({
     email: '', // Change "username" to "email"
     password: '',
+    role: 'user'
   });
 
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Add a class to the body element when the component mounts
     document.body.classList.add('signup-page');
-
-    // Remove the class when the component unmounts
     return () => {
       document.body.classList.remove('signup-page');
     };
@@ -40,7 +41,6 @@ const SignupForm = () => {
         console.error('Server response data:', err.response.data);
         console.error('Server response status:', err.response.status);
 
-        // Display more specific error messages based on the server response
         if (err.response.status === 400) {
           setError('Invalid data. Please check your input.');
         } else if (err.response.status === 401) {
@@ -58,10 +58,15 @@ const SignupForm = () => {
     }
   };
 
+  // Function to toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <>
     <div>
-       <h1 className="employee-heading">Employee Management System</h1>
+      <h1 className="employee-heading">Employee Management System</h1>
     </div>
     <div className="signup-container">
       <div className="background-container"></div>
@@ -80,16 +85,38 @@ const SignupForm = () => {
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              onChange={handleInputChange}
-            />
+            <div className="password-input-container">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Enter your password"
+                onChange={handleInputChange}
+              />
+              <button
+                type="button"
+                className="eye-button"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? '👁️' : '👁️‍🗨️'}
+              </button>
+            </div>
           </div>
-          <button type='submit'>Sign Up</button>
+          <div className="form-group1">
+            <label htmlFor="role">Role</label>
+            <select
+              name="role"
+              value={values.role}
+              onChange={(e) => setValues({ ...values, role: e.target.value })}
+            >
+              <option value="user">User</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+          <button type="submit" className='btn'>Sign Up</button>
           <div className="login-link">
-            <p>Already have an account? <Link to="/auth/login">Log in here</Link></p>
+            <p>
+              Already have an account? <Link to="/auth/login">Log in here</Link>
+            </p>
           </div>
         </form>
       </div>

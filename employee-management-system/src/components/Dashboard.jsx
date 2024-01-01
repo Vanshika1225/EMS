@@ -10,27 +10,40 @@ const Dashboard = () => {
         <div className="sidebar-container">
           {/* Use the root ("/") route for Dashboard link */}
           <Link to="/" className="a">
-            Dashboard
+           Dashboard
           </Link>
           <div className="navbar">
             <ul>
               <li>
-                <Link to="/">Dashboard</Link>
+                <Link to="/">
+                 Dashboard
+                </Link>
               </li>
               <li>
-                <Link to="/dashboard/employee">Manage Employees</Link>
+              <Link to="/employee">
+                  Manage Employees
+                </Link>
               </li>
               <li>
-                <Link to="/dashboard/attendance">Attendance</Link>
+                <Link to="/attendance">
+                   Attendance
+                </Link>
               </li>
               <li>
-                <Link to="/dashboard/leave">Leave</Link>
+                <Link to="/leave">
+                  Leave
+                </Link>
+
               </li>
               <li>
-                <Link to="/dashboard/performance">Performance</Link>
+                <Link to="/performance">
+                  Performance
+                </Link>
               </li>
               <li>
-                <Link to="/dashboard">Logout</Link>
+                <Link to="/dashboard">
+                  Logout
+                </Link>
               </li>
             </ul>
           </div>
