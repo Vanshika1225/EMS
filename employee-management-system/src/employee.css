@@ -1,0 +1,43 @@
+.emp{
+    padding: 5px;
+    margin-top: 3px;
+}
+
+.emp-inner{
+    display: flex;
+    justify-content: center;
+    margin-left:190px;
+    margin-top:20px
+}
+
+.btn1{
+    display: flex;
+    justify-content: center;
+    margin-left: 460px;
+    border: 2px solid black;
+    width: 10vw;
+    height: 6vh;
+    text-decoration: none;
+    background-color: black;
+    color: white;
+    border-radius: 22px;
+    margin-top: 49px;
+    padding: 6px;
+}
+.btn:hover{
+    background-color: rgb(29, 28, 28);
+}
+
+.AddEmp{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5vh;
+}
+
+.AddEmp-inner{
+    padding: 3px;
+    border-radius: 2px;
+    width: 3vw;
+    text-align:center;
+}

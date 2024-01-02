@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import NavigationBar from './NavigationBar';
+// Dashboard.js
+
 import '../dashboard.css';
 
 const Dashboard = () => {
@@ -9,34 +11,34 @@ const Dashboard = () => {
       <div style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
         <div className="sidebar-container">
           {/* Use the root ("/") route for Dashboard link */}
-          <Link to="/" className="a">
+          <Link to="/dashboard" className="a">
            Dashboard
           </Link>
           <div className="navbar">
             <ul>
               <li>
-                <Link to="/">
+                <Link to="/dashboard">
                  Dashboard
                 </Link>
               </li>
               <li>
-              <Link to="/employee">
+              <Link to="/dashboard/employee">
                   Manage Employees
                 </Link>
               </li>
               <li>
-                <Link to="/attendance">
+                <Link to="/dashboard/attendance">
                    Attendance
                 </Link>
               </li>
               <li>
-                <Link to="/leave">
+                <Link to="/dashboard/leave">
                   Leave
                 </Link>
 
               </li>
               <li>
-                <Link to="/performance">
+                <Link to="/dashboard/performance">
                   Performance
                 </Link>
               </li>
@@ -54,9 +56,9 @@ const Dashboard = () => {
           </div>
           {/* Include the NavigationBar component here */}
           <NavigationBar />
-          <Outlet />
         </div>
       </div>
+        <Outlet />
     </div>
   );
 };
