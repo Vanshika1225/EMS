@@ -1,54 +1,31 @@
-// // // Attendance.js
-
-// import React from 'react';
-// // import AttendanceForm from './AttendanceForm'; // Assuming you have a form component for recording attendance
-// // import AttendanceTable from './AttendanceTable'; // Assuming you have a table component for displaying attendance records
-
-// const Attendance = () => {
-// //   const [isFormVisible, setFormVisible] = useState(false);
-// //   const [selectedAttendanceId, setSelectedAttendanceId] = useState(null);
-
-// //   const showForm = (attendanceId = null) => {
-// //     setFormVisible(true);
-// //     setSelectedAttendanceId(attendanceId);
-// //   };
-
-// //   const hideForm = () => {
-// //     setFormVisible(false);
-// //     setSelectedAttendanceId(null);
-// //   };
-
-//   return (
-//     <div>
-//              <h2>Attendance Page</h2>
-// {/* //       Button to show the form for adding attendance */}
-// {/* //       <button onClick={() => showForm()}>+ Add Attendance</button> */}
-
-// //       {/* Conditionally render the form based on visibility */}
-// {/* //       {isFormVisible && ( */}
-// {/* //         <AttendanceForm */}
-// {/* //           attendanceId={selectedAttendanceId}
-// //           onHideForm={hideForm}
-// //         />
-// //       )} */}
-
-// //       {/* Add component for displaying attendance records */}
-// {/* //       <AttendanceTable onEdit={showForm} onDelete={hideForm} /> */}
-//     </div>
-//   );
-// };
-
-// export default Attendance;
-
-import React from 'react'
-
+import React ,{useState,useEffect} from 'react'
+import '../attendance.css'
 const Attendance = () => {
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
+    useEffect(() => {
+    // Fetch attendance records from the server
+    const fetchAttendanceRecords = async () => {
+      try {
+        const response = await fetch('/attendance');
+        const data = await response.json();
+        setAttendanceRecords(data);
+      } catch (error) {
+        console.error('Error fetching attendance records:', error);
+      }
+    };
+
+    fetchAttendanceRecords();
+  }, []);
+
   return (
-    <div>
-      <h1>Attendance Page</h1>
-    </div>
-  )
-}
+    <>
+      <div className='attendance'>
+        <h1>Attendance Record</h1>
 
-export default Attendance
+      </div>
+      <Link to="/dashboard/AddAttendance" className='btn1'>Add Employee</Link>
+    </>
+  );
+};
 
+export default Attendance;

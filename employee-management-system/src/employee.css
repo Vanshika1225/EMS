@@ -32,7 +32,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 5vh;
+    height: 95vh;
+    width: 85vw;
 }
 
 .AddEmp-inner{
@@ -40,4 +41,52 @@
     border-radius: 2px;
     width: 3vw;
     text-align:center;
+}
+.AddEmp-inner h2{
+    display:flex;
+    margin-left:150px;
+    width: 15vw;
+}
+.Input-field{
+    width: 47vw;
+    justify-content: center;
+    display: flex;
+    padding :10px;
+    font-size: 1.5rem;
+    
+}
+.Input-field label{
+    font-size: 1.3rem;
+    margin-left: -154px;
+    color:black;
+}
+.Input-field input{
+    width: 32vw;
+    margin-left: 10px;
+}
+.Input-field select{
+    width: 35vw;
+    margin-left: 10px;
+}
+.Button{
+    display: flex;
+    width:10vw;
+    justify-content: center;
+    align-items: center;
+    text-align:center;
+    margin-left: 210px;
+    cursor: pointer;
+}
+.Button button{
+    background-color: black;
+    color: white;
+}
+.Button button:hover{
+    background-color: rgb(41, 38, 38);
+}
+@media screen and (max-width:1440) {
+    .AddEmp-inner{
+        height: 99vh;
+        margin-right: -171px;
+    }
 }

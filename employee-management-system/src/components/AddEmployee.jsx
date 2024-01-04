@@ -1,72 +1,70 @@
 import React ,{useState} from 'react'
-
+import { useNavigate } from 'react-router-dom';
 const AddEmployee = () => {
-    const [employeeData, setEmployeeData] = useState({
-        employeeId: '',
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        salary: '',
-        gender: 'male',
-        department: 'developer',
-        hiringDate: new Date().toISOString().split('T')[0], // Set hiringDate to today
-        startingDate: new Date().toISOString().split('T')[0], // Set startingDate to today
+  const navigate = useNavigate();
+  const [employeeData, setEmployeeData] = useState({
+    employeeId: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    salary: '',
+    gender: 'male',
+    department: 'developer',
+    hiringDate: new Date().toISOString().split('T')[0],
+    startingDate: new Date().toISOString().split('T')[0],
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEmployeeData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:3001/employee', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(employeeData),
       });
-      const handleChange = (e) => {
-        const { name, value } = e.target;
-        setEmployeeData((prevData) => ({
-          ...prevData,
-          [name]: value,
-        }));
-      };
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-      
-        try {
-          const response = await fetch('/api/employees', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              // Include the JWT token in the headers if the user is logged in
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(employeeData),
-          });
-      
-          if (response.ok) {
-            // Employee data successfully submitted
-            console.log('Employee data submitted successfully');
-            // Reset the form fields after submission
-            setEmployeeData({
-              employeeId: '',
-              firstName: '',
-              middleName: '',
-              lastName: '',
-              salary: '',
-              gender: 'female',
-              department: 'hr',
-              hiringDate: '',
-              startingDate: '',
-            });
-          } else {
-            // Handle error cases
-            console.error('Error submitting employee data:', response.statusText);
-            // You might want to show an error message to the user
-          }
-        } catch (error) {
-          console.error('Error submitting employee data:', error.message);
-          // Handle other errors
-          // You might want to show an error message to the user
-        }
-      };
+
+      if (response.ok) {
+        console.log('Employee data submitted successfully');
+        setEmployeeData({
+          employeeId: '',
+          firstName: '',
+          middleName: '',
+          lastName: '',
+          salary: '',
+          gender: 'female',
+          department: 'hr',
+          hiringDate: '',
+          startingDate: '',
+        });
+        navigate('/dashboard/employee');
+      } else {
+        console.error('Error submitting employee data:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error submitting employee data:', error.message);
+    }
+  };
+
       
   return (
     <div className='AddEmp'>
       <div className='AddEmp-inner'>
         <h2>Add Employee</h2>
-        <form onChange={handleSubmit}>
-          <div>
-            <label htmlFor="employeeId">EmployeeId:</label>
+        <form onSubmit={handleSubmit}>
+          <div className="Input-field">
+            <label htmlFor="employeeId">EmployeeId: </label>
             <input
               type="text"
               name="employeeId"
@@ -76,8 +74,8 @@ const AddEmployee = () => {
               required
             />
           </div>
-          <div>
-            <label htmlFor="firstName">First Name :</label>
+          <div className="Input-field">
+            <label htmlFor="firstName">First Name: </label>
             <input
               type="text"
               name="firstName"
@@ -87,8 +85,8 @@ const AddEmployee = () => {
               required
             />
           </div>
-          <div>
-            <label htmlFor="middleName">Middle Name :</label>
+          <div className="Input-field">
+            <label htmlFor="middleName">Middle Name: </label>
             <input
               type="text"
               name="middleName"
@@ -97,8 +95,8 @@ const AddEmployee = () => {
               placeholder="Enter Middle Name"
             />
           </div>
-          <div>
-            <label htmlFor="lastName">Last Name :</label>
+          <div className="Input-field">
+            <label htmlFor="lastName">Last Name: </label>
             <input
               type="text"
               name="lastName"
@@ -108,8 +106,8 @@ const AddEmployee = () => {
               required
             />
           </div>
-          <div>
-            <label htmlFor="salary">Salary:</label>
+          <div className="Input-field">
+            <label htmlFor="salary">Salary: </label>
             <input
               type="text"
               name="salary"
@@ -119,8 +117,8 @@ const AddEmployee = () => {
               required
             />
           </div>
-          <div>
-            <label htmlFor="gender">Gender:</label>
+          <div className="Input-field">
+            <label htmlFor="gender">Gender: </label>
             <select
               name="gender"
               value={employeeData.gender}
@@ -131,8 +129,8 @@ const AddEmployee = () => {
               <option value="other">Other</option>
             </select>
           </div>
-          <div>
-            <label htmlFor="department">Department:</label>
+          <div className="Input-field">
+            <label htmlFor="department">Department: </label>
             <select
               name="department"
               value={employeeData.department}
@@ -148,8 +146,8 @@ const AddEmployee = () => {
               You may use a date picker library or input type="date"
               for these fields depending on your preference.
           */}
-          <div>
-            <label htmlFor="hiringDate">Hiring Date:</label>
+          <div className="Input-field">
+            <label htmlFor="hiringDate">Hiring Date:  </label>
             <input
               type="date"
               name="hiringDate"
@@ -158,8 +156,8 @@ const AddEmployee = () => {
               required
             />
           </div>
-          <div>
-            <label htmlFor="startingDate">Starting Date:</label>
+          <div className="Input-field">
+            <label htmlFor="startingDate">Starting Date: </label>
             <input
               type="date"
               name="startingDate"
@@ -168,8 +166,8 @@ const AddEmployee = () => {
               required
             />
           </div>
-          <div >
-            <label htmlFor="role">Role</label>
+          <div className="Input-field">
+            <label htmlFor="role">Role: </label>
             <select
               name="role"
               value={employeeData.role}>
@@ -177,7 +175,7 @@ const AddEmployee = () => {
               <option value="Admin">Admin</option>
             </select>
           </div>
-          <div>
+          <div className="Button">
             <button type="submit">Submit</button>
           </div>
         </form>

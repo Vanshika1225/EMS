@@ -117,7 +117,8 @@ router.post("/login", async (req, res) => {
 });
 
 // Create Employee
-router.post("/", async (req, res) => {
+router.post("/dashboard/employee", async (req, res) => {
+  console.log("Request received at /dashboard/employee");
   try {
     const createdBy = req.user ? req.user._id : null;
     const newEmployee = new Employee({

@@ -10,7 +10,7 @@ const Employee = () => {
       <div className='emp-inner'>
         <h1>Employee List</h1>
       </div>
-      <Link to="/AddEmployee" className='btn1'>Add Employee</Link>
+      <Link to="/dashboard/AddEmployee" className='btn1'>Add Employee</Link>
     </div>
   )
 }
