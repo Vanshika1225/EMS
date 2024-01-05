@@ -12,6 +12,7 @@ const AddEmployee = () => {
     department: 'developer',
     hiringDate: new Date().toISOString().split('T')[0],
     startingDate: new Date().toISOString().split('T')[0],
+    role:'user'
   });
 
   const handleChange = (e) => {
@@ -26,7 +27,7 @@ const AddEmployee = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3001/employee', {
+      const response = await fetch('http://localhost:3000/dashboard/AddEmployee', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

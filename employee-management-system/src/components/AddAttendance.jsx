@@ -1,11 +1,12 @@
-// AddAttendance.js
 import React, { useState } from 'react';
-import '../attendance.css'
+import { useNavigate } from 'react-router-dom';
+import '../attendance.css';
+
 const AddAttendance = () => {
+  const navigate = useNavigate();
   const [attendanceData, setAttendanceData] = useState({
     employeeId: '',
     date: new Date().toISOString().split('T')[0],
-    // Add other fields as needed
   });
 
   const handleChange = (e) => {
@@ -36,6 +37,9 @@ const AddAttendance = () => {
           employeeId: '',
           date: new Date().toISOString().split('T')[0],
         });
+
+        // Redirect to the Attendance page after successful submission
+        navigate('/dashboard/attendance');
       } else {
         console.error('Error recording attendance:', response.statusText);
       }

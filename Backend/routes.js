@@ -16,14 +16,18 @@ const secretKey = process.env.JWT_SECRET_KEY || "default_secret_key";
 console.log(secretKey);
 
 // Middleware to check if the user is an admin
+// Middleware to check if the user is an admin
 const isAdmin = (req, res, next) => {
-  console.log("User Role:", req.user.role);
-  if (req.user && req.user.role === "admin") {
+  const userRole = req.user ? req.user.role : null;
+  console.log("User Role:", userRole);
+
+  if (userRole === "admin") {
     next(); // Allow admin to proceed to the next middleware
   } else {
     res.status(403).send({ error: "Permission denied. Admins only." });
   }
 };
+
 
 const validateEmail = (email) => {
   // Email validation regex (you can adjust it as needed)
@@ -117,12 +121,14 @@ router.post("/login", async (req, res) => {
 });
 
 // Create Employee
+// Create Employee
 router.post("/dashboard/employee", async (req, res) => {
   console.log("Request received at /dashboard/employee");
   try {
     const createdBy = req.user ? req.user._id : null;
     const newEmployee = new Employee({
       ...req.body,
+      createdBy, // Set createdBy based on authentication status
     });
     await newEmployee.validate();
     await newEmployee.save();
@@ -135,6 +141,7 @@ router.post("/dashboard/employee", async (req, res) => {
     }
   }
 });
+
 
 // GET route for users
 router.get("/", async (req, res) => {

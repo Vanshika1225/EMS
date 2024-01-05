@@ -11,8 +11,6 @@ import AddAttendance from './components/AddAttendance';// import Performance fro
 // import Leave from './components/Leave';
 import AddEmployee from './components/AddEmployee';
 
-
-
 function App(){
   return(
     <BrowserRouter>
@@ -22,7 +20,7 @@ function App(){
             <Route path="/dashboard/employee" element={<Employee />}></Route>
             <Route path="/dashboard/AddEmployee" element={<AddEmployee />}></Route>
             <Route path="/dashboard/attendance" element={<Attendance />} />
-            <Route path="/dashboard/addAttendance" element={<AddAttendance />} />
+            <Route path="/dashboard/AddAttendance" element={<AddAttendance />} />
       
           </Route>
 
