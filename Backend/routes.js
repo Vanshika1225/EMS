@@ -16,18 +16,14 @@ const secretKey = process.env.JWT_SECRET_KEY || "default_secret_key";
 console.log(secretKey);
 
 // Middleware to check if the user is an admin
-// Middleware to check if the user is an admin
 const isAdmin = (req, res, next) => {
-  const userRole = req.user ? req.user.role : null;
-  console.log("User Role:", userRole);
-
-  if (userRole === "admin") {
+  console.log("User Role:", req.user.role);
+  if (req.user && req.user.role === "admin") {
     next(); // Allow admin to proceed to the next middleware
   } else {
     res.status(403).send({ error: "Permission denied. Admins only." });
   }
 };
-
 
 const validateEmail = (email) => {
   // Email validation regex (you can adjust it as needed)
@@ -38,33 +34,24 @@ const validateEmail = (email) => {
 // Signup endpoint
 router.post("/signup", async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password, username, role } = req.body;
 
-    // Validation for email
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
-    }
-
-    // Validation for password
-    if (password.length < 8) {
-      return res.status(400).json({ error: "Password must be at least 8 characters long" });
-    }
-
-    if (!/[a-zA-Z]/.test(password) || !/\d/.test(password) || !/[^a-zA-Z0-9]/.test(password)) {
-      return res.status(400).json({ error: "Password must contain at least one letter, one digit, and one special character" });
+    // Validation for username
+    if (!username) {
+      return res.status(400).json({ error: "Username is required" });
     }
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    
+    const existingUser = await User.findOne({ username });
+
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ error: "Username already exists" });
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ email, password: hashedPassword, role:role||'user' });
+    const newUser = new User({ email, password: hashedPassword, username, role: role || 'user' });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully!" });
@@ -74,14 +61,15 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+
 // Login endpoint
 router.post("/login", async (req, res) => {
   try {
     console.log("Login request received");
-    const { usernameOrEmail, password } = req.body;
+    const { email, password } = req.body;
 
-    // Check if user exists by username or email
-    const foundUser = await User.findOne({ $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }] });
+    // Check if user exists by email
+    const foundUser = await User.findOne({ email });
 
     if (!foundUser) {
       return res.status(401).json({ error: "Invalid credentials!" });
@@ -103,7 +91,7 @@ router.post("/login", async (req, res) => {
     try {
       // Create a new JWT token
       const token = jwt.sign(
-        { username: foundUser.username, email: foundUser.email, role: foundUser.role },
+        { email: foundUser.email, role: foundUser.role },
         secretKey
       );
 
@@ -121,23 +109,33 @@ router.post("/login", async (req, res) => {
 });
 
 // Create Employee
-// Create Employee
-router.post("/dashboard/employee", async (req, res) => {
+router.post("/", async (req, res) => {
   console.log("Request received at /dashboard/employee");
+
   try {
-    const createdBy = req.user ? req.user._id : null;
+    // Ensure req.user exists and has the expected properties
+    const createdBy = req.user && req.user._id ? req.user._id : null;
+
     const newEmployee = new Employee({
       ...req.body,
-      createdBy, // Set createdBy based on authentication status
+      createdBy,
     });
+
+    // Validate the employee data
     await newEmployee.validate();
+
+    // Save the employee to the database
     await newEmployee.save();
-    res.status(201).send(newEmployee);
+
+    // Send a proper JSON response with the new employee data
+    res.status(201).json({ data: newEmployee });
   } catch (error) {
     if (error.name === "ValidationError") {
-      res.status(400).send({ error: error.message });
+      // Send a 400 Bad Request response for validation errors
+      res.status(400).json({ error: error.message });
     } else {
-      res.status(500).send(error);
+      // Send a 500 Internal Server Error response for other errors
+      res.status(500).json({ error: "Internal server error" });
     }
   }
 });

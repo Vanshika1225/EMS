@@ -1,5 +1,6 @@
-import React ,{useState} from 'react'
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 const AddEmployee = () => {
   const navigate = useNavigate();
   const [employeeData, setEmployeeData] = useState({
@@ -12,7 +13,7 @@ const AddEmployee = () => {
     department: 'developer',
     hiringDate: new Date().toISOString().split('T')[0],
     startingDate: new Date().toISOString().split('T')[0],
-    role:'user'
+    role: 'user',
   });
 
   const handleChange = (e) => {
@@ -27,11 +28,19 @@ const AddEmployee = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/dashboard/AddEmployee', {
+      const token = localStorage.getItem('token');
+      console.log('Token:', token);
+
+      if (!token) {
+        console.error('Token is null. Check token retrieval from localStorage.');
+        return;
+      }
+
+      const response = await fetch('http://localhost:3000/employees', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `${token}`,
         },
         body: JSON.stringify(employeeData),
       });
@@ -57,6 +66,7 @@ const AddEmployee = () => {
       console.error('Error submitting employee data:', error.message);
     }
   };
+  
 
       
   return (
@@ -171,7 +181,8 @@ const AddEmployee = () => {
             <label htmlFor="role">Role: </label>
             <select
               name="role"
-              value={employeeData.role}>
+              value={employeeData.role}
+              onChange={handleChange}>
               <option value="user">User</option>
               <option value="Admin">Admin</option>
             </select>

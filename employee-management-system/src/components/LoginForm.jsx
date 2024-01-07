@@ -1,3 +1,5 @@
+// LoginForm.js
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
@@ -5,12 +7,11 @@ import "../Login.css";
 
 const LoginForm = () => {
   const [values, setValues] = useState({
-    usernameOrEmail: "",
+    email: "", // Change from 'usernameOrEmail' to 'email'
     password: "",
   });
 
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,17 +27,15 @@ const LoginForm = () => {
     axios
       .post("http://localhost:3000/auth/login", values)
       .then((result) => {
-        navigate("/");
+        const { token } = result.data;
+        // Save the token to localStorage or a secure storage mechanism
+        localStorage.setItem("token", token);
+        navigate("/dashboard");
       })
       .catch((err) => {
-        setError("Invalid username or password. Please try again.");
+        setError("Invalid email or password. Please try again.");
         console.log(err);
       });
-  };
-
-  // Function to toggle password visibility
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -51,39 +50,31 @@ const LoginForm = () => {
           <h2>Login</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="usernameOrEmail">Username or Email</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="text"
-                name="usernameOrEmail"
-                placeholder="Enter your username or email"
+                name="email"
+                placeholder="Enter your email"
                 onChange={(e) =>
-                  setValues({ ...values, usernameOrEmail: e.target.value })
+                  setValues({ ...values, email: e.target.value })
                 }
               />
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <div className="password-input-container">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="Enter your password"
-                  value={values.password}
-                  onChange={(e) =>
-                    setValues({ ...values, password: e.target.value })
-                  }
-                />
-                {/* Eye button to toggle password visibility */}
-                <button
-                  type="button"
-                  className="eye-button"
-                  onClick={togglePasswordVisibility}
-                >
-                  {showPassword ? "👁️" : "👁️‍🗨️"}
-                </button>
-              </div>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                value={values.password}
+                onChange={(e) =>
+                  setValues({ ...values, password: e.target.value })
+                }
+              />
             </div>
-            <button type="submit" className="btn">Submit</button>
+            <button type="submit" className="btn">
+              Submit
+            </button>
             <div className="signup-link">
               <p>
                 Don't have an account?{" "}
@@ -96,4 +87,5 @@ const LoginForm = () => {
     </>
   );
 };
+
 export default LoginForm;
