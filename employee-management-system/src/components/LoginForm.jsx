@@ -36,12 +36,13 @@ const LoginForm = () => {
         setError("Invalid email or password. Please try again.");
         console.log(err);
       });
+      
   };
 
   return (
     <>
       <div>
-        <h1 className="employee-heading">Employee Management System</h1>
+        {/* <h1 className="employee-heading">Employee Management System</h1> */}
       </div>
       <div className="login-container">
         <div className="background-container"></div>

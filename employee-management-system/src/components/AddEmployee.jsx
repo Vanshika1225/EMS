@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const AddEmployee = () => {
+const AddEmployee = ({ employees, setEmployees }) => {
   const navigate = useNavigate();
   const [employeeData, setEmployeeData] = useState({
     employeeId: '',
@@ -29,45 +30,30 @@ const AddEmployee = () => {
 
     try {
       const token = localStorage.getItem('token');
-      console.log('Token:', token);
 
       if (!token) {
         console.error('Token is null. Check token retrieval from localStorage.');
         return;
       }
 
-      const response = await fetch('http://localhost:3000/employees', {
-        method: 'POST',
+      const response = await axios.post('http://localhost:3000/employees', employeeData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `${token}`,
         },
-        body: JSON.stringify(employeeData),
       });
 
-      if (response.ok) {
-        console.log('Employee data submitted successfully');
-        setEmployeeData({
-          employeeId: '',
-          firstName: '',
-          middleName: '',
-          lastName: '',
-          salary: '',
-          gender: 'female',
-          department: 'hr',
-          hiringDate: '',
-          startingDate: '',
-        });
+      if (response.status === 201) {
+        const createdEmployee = response.data.data;
+        setEmployees((prevEmployees) => [createdEmployee, ...prevEmployees]);
         navigate('/dashboard/employee');
       } else {
-        console.error('Error submitting employee data:', response.statusText);
+        console.error('Error creating employee:', response.statusText);
       }
     } catch (error) {
       console.error('Error submitting employee data:', error.message);
     }
   };
-  
-
       
   return (
     <div className='AddEmp'>

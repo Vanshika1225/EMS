@@ -1,16 +1,16 @@
 // SignupForm.js
 
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
-import '../Signup.css';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import "../Signup.css";
 
 const SignupForm = () => {
   const [values, setValues] = useState({
-    username: '',
-    email: '',
-    password: '',
-    role: 'user',
+    username: "",
+    email: "",
+    password: "",
+    role: "user",
   });
 
   const [error, setError] = useState(null);
@@ -24,24 +24,24 @@ const SignupForm = () => {
     event.preventDefault();
 
     try {
-      console.log('Request payload:', values);
-      await axios.post('http://localhost:3000/auth/signup', values);
-      navigate('/auth/login'); // Redirect to login after successful signup
+      console.log("Request payload:", values);
+      await axios.post("http://localhost:3000/auth/signup", values);
+      navigate("/auth/login"); // Redirect to login after successful signup
     } catch (err) {
-      console.error('Error:', err);
-      setError('Error signing up. Please try again later.');
+      console.error("Error:", err);
+      setError("Error signing up. Please try again later.");
     }
   };
 
   return (
     <>
-      <div>
-        <h1 className="employee-heading">Employee Management System</h1>
+      <div className="background">
+        {/* <h1 className="employee-heading">Employee Management System</h1> */}
       </div>
       <div className="signup-container">
         <div className="background-container"></div>
         <div>
-          <div>{error && <div style={{ color: 'red' }}>{error}</div>}</div>
+          <div>{error && <div style={{ color: "red" }}>{error}</div>}</div>
           <h2>Sign Up</h2>
           <form onSubmit={handleSignup}>
             <div className="form-group">
@@ -82,10 +82,13 @@ const SignupForm = () => {
                 <option value="admin">Admin</option>
               </select>
             </div>
-            <button type="submit" className='btn'>Sign Up</button>
+            <button type="submit" className="btn">
+              Sign Up
+            </button>
             <div className="login-link">
               <p>
-                Already have an account? <Link to="/auth/login">Log in here</Link>
+                Already have an account?{" "}
+                <Link to="/auth/login">Log in here</Link>
               </p>
             </div>
           </form>

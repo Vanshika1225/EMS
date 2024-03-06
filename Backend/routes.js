@@ -30,28 +30,18 @@ const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
-
 // Signup endpoint
 router.post("/signup", async (req, res) => {
   try {
     const { email, password, username, role } = req.body;
 
-    // Validation for username
-    if (!username) {
-      return res.status(400).json({ error: "Username is required" });
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ username });
-
-    if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
-    }
-
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create a new user with the hashed password
     const newUser = new User({ email, password: hashedPassword, username, role: role || 'user' });
+
+    // Save the new user to the database
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully!" });
@@ -61,50 +51,35 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-
 // Login endpoint
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
-    console.log("Login request received");
-    const { email, password } = req.body;
+    const { email, hashedPassword } = req.body;
+    console.log(email,hashedPassword)
+    // Find user by email
+    const user = await User.findOne({ email });
+    console.log(user)
+    // If user not found, send error response
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+console.log(user.password)
+    // Compare the provided password with the hashed password stored in the database
+    // const passwordMatch = await bcrypt.compare(password, ser.password);
 
-    // Check if user exists by email
-    const foundUser = await User.findOne({ email });
-
-    if (!foundUser) {
-      return res.status(401).json({ error: "Invalid credentials!" });
+    // If passwords do not match, send error response
+    if (hashedPassword != User.password) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Hash the password and compare
-    const passwordMatch = await bcrypt.compare(password, foundUser.password);
+    // Generate JWT token
+    const token = user.generateAuthToken();
 
-    if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid credentials!" });
-    }
-
-    // Ensure that secretKey is defined
-    if (!secretKey) {
-      console.error("JWT secret key is missing or invalid.");
-      return res.status(500).json({ error: "Internal server error" });
-    }
-
-    try {
-      // Create a new JWT token
-      const token = jwt.sign(
-        { email: foundUser.email, role: foundUser.role },
-        secretKey
-      );
-
-      // Send the token in the response
-      console.log("Login successful");
-      res.status(200).json({ token });
-    } catch (error) {
-      console.log("JWT Sign Error:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
+    // Send token in response
+    res.status(200).json({ token });
   } catch (error) {
-    console.log("Login Error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Login Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -139,7 +114,6 @@ router.post("/", async (req, res) => {
     }
   }
 });
-
 
 // GET route for users
 router.get("/", async (req, res) => {

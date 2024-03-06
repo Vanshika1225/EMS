@@ -1,50 +1,52 @@
-import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
-import NavigationBar from './NavigationBar';
-// Dashboard.js
+// Dashboard.jsx
 
+import React, { useState } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom'; 
+import NavigationBar from './NavigationBar';
 import '../dashboard.css';
 
 const Dashboard = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Assuming initially user is not logged in
+  const navigate = useNavigate(); 
+
+  const handleLogout = () => {
+    // Clear authentication tokens and reset isLoggedIn state
+    setIsLoggedIn(false);
+
+    // Clear authentication token from local storage
+    localStorage.removeItem('token');
+
+    // Redirect to signup page after logout
+    navigate('/auth/signup');
+  };
+
   return (
     <div>
       <div style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
         <div className="sidebar-container">
-          {/* Use the root ("/") route for Dashboard link */}
           <Link to="/dashboard" className="a">
-           Dashboard
+            Dashboard
           </Link>
           <div className="navbar">
             <ul>
               <li>
-                <Link to="/dashboard">
-                 Dashboard
-                </Link>
-              </li>
-              <li>
-              <Link to="/dashboard/employee">
+                <Link to="/dashboard/employee">
                   Manage Employees
                 </Link>
               </li>
               <li>
                 <Link to="/dashboard/attendance">
-                   Attendance
+                  Attendance
                 </Link>
               </li>
               <li>
                 <Link to="/dashboard/leave">
                   Leave
                 </Link>
-
               </li>
               <li>
                 <Link to="/dashboard/performance">
                   Performance
-                </Link>
-              </li>
-              <li>
-                <Link to="/dashboard">
-                  Logout
                 </Link>
               </li>
             </ul>
@@ -54,11 +56,10 @@ const Dashboard = () => {
           <div>
             <h4>Employee Management System</h4>
           </div>
-          {/* Include the NavigationBar component here */}
-          <NavigationBar />
+          <NavigationBar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
         </div>
       </div>
-        <Outlet />
+      <Outlet />
     </div>
   );
 };
